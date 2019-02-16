@@ -1,3 +1,4 @@
+import EventEmitter from 'EventEmitter'
 import Dispatcher from './Dispatcher'
 
 const tally = {
@@ -16,11 +17,23 @@ const zero = () => {
   tally.count = 0
 }
 
-class TallyStore {
+class TallyStore extends EventEmitter {
   getTally() {
     return Object.assign({}, tally)
   }
+  addChangeListener(callback) {
+    this.addListener('CHANGE', callback)
+  }
+  removeChangeListener(callback) {
+    this.removeListener('CHANGE', callback)
+  }
+  emitChange() {
+    this.emit('CHANGE')
+  }
 }
+
+const instance = new TallyStore()
+export default instance
 
 const handleAction = action => {
   switch (action.type) {
@@ -34,11 +47,9 @@ const handleAction = action => {
       zero()
       break
     default:
-    // 아무것도 하지 않음
+    // do nothing
   }
+  instance.emitChange()
 }
-
-const instance = new TallyStore()
-export default instance
 
 Dispatcher.register(handleAction)

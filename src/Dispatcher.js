@@ -4,11 +4,11 @@ class Dispatcher {
     this.actionHandlers = []
   }
 
-  register(actionHandlers) {
+  register(actionHandler) {
     this.actionHandlers.push(actionHandler)
   }
 
-  dispatcher(action) {
+  dispatch(action) {
     if (this.isDispatching) {
       throw new Error('Cannot dispatch in the middle of a dispatch')
     }
@@ -16,7 +16,6 @@ class Dispatcher {
 
     this.actionHandlers.forEach(handler => handler(action))
 
-    // 액션을 스토어로 전달할 것
     this.isDispatching = false
   }
 }
